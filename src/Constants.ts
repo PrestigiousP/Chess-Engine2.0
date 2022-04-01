@@ -12,6 +12,11 @@ export interface Position {
   y: number;
 }
 
+export interface Move {
+  piece: Piece;
+  desiredPosition: Position;
+}
+
 export enum PieceType {
   PAWN,
   BISHOP,
@@ -32,6 +37,7 @@ export interface Piece {
   type: PieceType;
   team: TeamType;
   enPassant?: boolean;
+  hasMoved?: boolean;
 }
 
 export const initialBoardState: Piece[] = [
@@ -43,6 +49,7 @@ export const initialBoardState: Piece[] = [
     },
     type: PieceType.ROOK,
     team: TeamType.OPPONENT,
+    hasMoved: false,
   },
   {
     image: `assets/images/knight_b.png`,
@@ -79,6 +86,7 @@ export const initialBoardState: Piece[] = [
     },
     type: PieceType.KING,
     team: TeamType.OPPONENT,
+    hasMoved: false,
   },
   {
     image: `assets/images/bishop_b.png`,
@@ -106,6 +114,7 @@ export const initialBoardState: Piece[] = [
     },
     type: PieceType.ROOK,
     team: TeamType.OPPONENT,
+    hasMoved: false,
   },
   {
     image: `assets/images/pawn_b.png`,
@@ -188,6 +197,7 @@ export const initialBoardState: Piece[] = [
     },
     type: PieceType.ROOK,
     team: TeamType.OUR,
+    hasMoved: false,
   },
   {
     image: `assets/images/knight_w.png`,
@@ -224,6 +234,7 @@ export const initialBoardState: Piece[] = [
     },
     type: PieceType.KING,
     team: TeamType.OUR,
+    hasMoved: false,
   },
   {
     image: `assets/images/bishop_w.png`,
@@ -251,6 +262,7 @@ export const initialBoardState: Piece[] = [
     },
     type: PieceType.ROOK,
     team: TeamType.OUR,
+    hasMoved: false,
   },
   {
     image: `assets/images/pawn_w.png`,
