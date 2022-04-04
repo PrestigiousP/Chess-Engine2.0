@@ -22,6 +22,7 @@ export default function Chessboard() {
   // When it's true it is white to play
   const [first, setFirst] = useState(0);
   const [engineToPlay, setEngineToPlay] = useState(false);
+  const [checkmate, setCheckmate] = useState(false);
   const [turn, setTurn] = useState(true);
   const [activePiece, setActivePiece] = useState<HTMLElement | null>(null);
   const [promotionPawn, setPromotionPawn] = useState<Piece>();
@@ -207,8 +208,6 @@ export default function Chessboard() {
 
           pieces.forEach((piece) => {
             if (samePosition(piece.position, grabPosition)) {
-              // console.log('the piece', piece)
-              //SPECIAL MOVE
               piece.enPassant =
                 Math.abs(grabPosition.y - y) === 2 &&
                 piece.type === PieceType.PAWN;
@@ -257,6 +256,7 @@ export default function Chessboard() {
     const stateOfGame = referee.isCheckmate(pieces, !turn);
     if (stateOfGame === "true") {
       console.log("checkmate!!!! ");
+      return;
     } else if (stateOfGame === "stalemate") {
       console.log("stalemate");
     } else if (stateOfGame === "draw") {
@@ -264,13 +264,13 @@ export default function Chessboard() {
     }
     setTurn(true);
     if (changeTurn) {
-      setEngineToPlay(true);
-      // engine.play(pieces)
-      // setTimeout(() => {engine.play(pieces)}, 100)
+    //   setEngineToPlay(true);
+    //   // engine.play(pieces)
+    //   // setTimeout(() => {engine.play(pieces)}, 100)
 
       onDropObservable.subscribe(dropPiece);
+          //setTurn(!turn);
     }
-
   }
 
   function promotePawn(pieceType: PieceType) {
