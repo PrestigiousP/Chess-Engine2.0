@@ -168,7 +168,7 @@ export default class Referee {
     for (const piec of pieces) {
       if (
         samePosition(piec.position, piece.position) &&
-        piece.team !== piec.team
+        piece.team.valueOf() !== piec.team.valueOf()
       ) {
         p = piec;
       }

@@ -33,7 +33,6 @@ export default function Chessboard() {
   const engine = new Engine(referee);
   const chessboardHelper = new ChessboardHelper();
   const onDropObservable = new OnDropObservable(() => {
-    console.log("ÇA MARCHE TU CALICE ");
     setPieces(engine.play(pieces));
   });
 
@@ -174,30 +173,39 @@ export default function Chessboard() {
             y
           );
         } else if (isEnPassantMove) {
-          const updatedPieces = pieces.reduce((results, piece) => {
+
+          const updatePieces: Piece[] = [];
+
+          pieces.forEach((piece) => {
             if (samePosition(piece.position, grabPosition)) {
               piece.enPassant = false;
               piece.position.x = x;
               piece.position.y = y;
-              results.push(piece);
+              updatePieces.push(Object.assign({}, piece));
             } else if (
               !samePosition(piece.position, { x, y: y - pawnDirection })
             ) {
               if (piece.type === PieceType.PAWN) {
                 piece.enPassant = false;
               }
-              results.push(piece);
+              updatePieces.push(Object.assign({}, piece));
+            } else {
+              let idx = pieces.indexOf(piece);
+              if (idx !== -1) {
+                pieces.splice(idx, 1);
+              }
             }
+          })
 
-            return results;
-          }, [] as Piece[]);
-
-          setPieces(updatedPieces);
+          setPieces(updatePieces);
           changeTurn = true;
         } else if (validMove) {
           //UPDATES THE PIECE POSITION
           //AND IF A PIECE IS ATTACKED, REMOVES IT
-          const updatedPieces = pieces.reduce((results, piece) => {
+
+          const updatePieces: Piece[] = [];
+
+          pieces.forEach((piece) => {
             if (samePosition(piece.position, grabPosition)) {
               // console.log('the piece', piece)
               //SPECIAL MOVE
@@ -221,17 +229,21 @@ export default function Chessboard() {
                 modalRef.current?.classList.remove("hidden");
                 setPromotionPawn(piece);
               }
-              results.push(piece);
+              updatePieces.push(Object.assign({}, piece));
             } else if (!samePosition(piece.position, { x, y })) {
               if (piece.type === PieceType.PAWN) {
                 piece.enPassant = false;
               }
-              results.push(piece);
+              updatePieces.push(Object.assign({}, piece));
+            } else {
+              let idx = pieces.indexOf(piece);
+              if (idx !== -1) {
+                pieces.splice(idx, 1);
+              }
             }
+          });
 
-            return results;
-          }, [] as Piece[]);
-          setPieces(updatedPieces);
+          setPieces(updatePieces);
           changeTurn = true;
         } else {
           //RESETS THE PIECE POSITION
@@ -258,6 +270,7 @@ export default function Chessboard() {
 
       onDropObservable.subscribe(dropPiece);
     }
+
   }
 
   function promotePawn(pieceType: PieceType) {
