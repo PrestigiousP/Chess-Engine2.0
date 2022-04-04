@@ -40,11 +40,39 @@ export default class Engine {
       TeamType.OPPONENT
     );
     console.log("the best move is: ", bestMove);
-    for (const piece of pieces) {
-      if (piece.position === bestMove.piece.position) {
-        piece.position = bestMove.position;
-        this.ref.removeCapturedPiece(piece, pieces);
-        return pieces;
+    if (bestMove.value == 0) {
+      let moves: any = [];
+      let move: any = null;
+      let randomPiece: any = null;
+      while (moves.length < 1) {
+        randomPiece = pieces[Math.floor(Math.random() * pieces.length)];
+        // console.log("the random piece move ", randomPiece);
+        moves = this.getMoves(randomPiece, pieces, true);
+        move = moves[Math.floor(Math.random() * moves.length)];
+      }
+      if (move != null) {
+        console.log("the move choosen ", move);
+        for (const piece of pieces) {
+          if (piece.position == randomPiece.position) {
+            console.log("the piece ", piece);
+            console.log("the position ", move);
+            piece.position = move;
+            this.ref.removeCapturedPiece(piece, pieces);
+            return pieces;
+          }
+        }
+      }
+      // moves[Math.floor(Math.random() * moves.length)];
+    } else {
+      if (pieces.length > 0) {
+        for (const piece of pieces) {
+          console.log(piece.position);
+          if (piece.position === bestMove.piece.position) {
+            piece.position = bestMove.position;
+            this.ref.removeCapturedPiece(piece, pieces);
+            return pieces;
+          }
+        }
       }
     }
     return pieces;
@@ -93,10 +121,11 @@ export default class Engine {
               TeamType.OUR
             );
             if (maxEval < newEval.value) {
-              console.log("found a better move ", move);
-              bestMov = newEval;
+              // console.log("found a better move ", move);
+              // bestMov = newEval;
               bestMov.piece = piece;
               bestMov.position = move;
+              bestMov.value = newEval.value;
               maxEval = newEval.value;
             }
             // maxEval = Math.max(maxEval, newEval.value);
@@ -132,9 +161,10 @@ export default class Engine {
             );
             if (minEval > newEval.value) {
               // console.log("found a better move");
-              bestMov = newEval;
+              // bestMov = newEval;
               bestMov.piece = piece;
               bestMov.position = move;
+              bestMov.value = newEval.value;
               minEval = newEval.value;
             }
             b = Math.min(b, newEval.value);
@@ -213,6 +243,7 @@ export default class Engine {
         }
       }
     }
+    // console.log("La différence de pointage: ", counter);
     return counter;
   }
 }

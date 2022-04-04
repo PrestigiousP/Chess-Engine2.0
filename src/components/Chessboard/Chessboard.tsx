@@ -22,6 +22,7 @@ export default function Chessboard() {
   // When it's true it is white to play
   const [first, setFirst] = useState(0);
   const [engineToPlay, setEngineToPlay] = useState(false);
+  const [checkmate, setCheckmate] = useState(false);
   const [turn, setTurn] = useState(true);
   const [activePiece, setActivePiece] = useState<HTMLElement | null>(null);
   const [promotionPawn, setPromotionPawn] = useState<Piece>();
@@ -32,10 +33,11 @@ export default function Chessboard() {
   const referee = new Referee();
   const engine = new Engine(referee);
   const chessboardHelper = new ChessboardHelper();
-  const onDropObservable = new OnDropObservable(() => {
-    console.log("ÇA MARCHE TU CALICE ");
-    setPieces(engine.play(pieces));
-  });
+
+  // const onDropObservable = new OnDropObservable(() => {
+  //   // console.log("ÇA MARCHE TU CALICE ");
+  //   setPieces(engine.play(pieces));
+  // });
 
   function grabPiece(e: React.MouseEvent) {
     const element = e.target as HTMLElement;
@@ -174,6 +176,21 @@ export default function Chessboard() {
             y
           );
         } else if (isEnPassantMove) {
+          // for(const piece of pieces){
+          //   if(samePosition(piece.position, grabPosition)){
+          //     piece.enPassant = false;
+          //     piece.position.x = x;
+          //     piece.position.y = y;
+          //   } else if (
+          //     !samePosition(piece.position, { x, y: y - pawnDirection })
+          //   ) {
+          //     if (piece.type === PieceType.PAWN) {
+          //       piece.enPassant = false;
+          //     }
+          //     results.push(piece);
+          //   }
+          // }
+
           const updatedPieces = pieces.reduce((results, piece) => {
             if (samePosition(piece.position, grabPosition)) {
               piece.enPassant = false;
@@ -195,12 +212,8 @@ export default function Chessboard() {
           setPieces(updatedPieces);
           changeTurn = true;
         } else if (validMove) {
-          //UPDATES THE PIECE POSITION
-          //AND IF A PIECE IS ATTACKED, REMOVES IT
-          const updatedPieces = pieces.reduce((results, piece) => {
+          for (const piece of pieces) {
             if (samePosition(piece.position, grabPosition)) {
-              // console.log('the piece', piece)
-              //SPECIAL MOVE
               piece.enPassant =
                 Math.abs(grabPosition.y - y) === 2 &&
                 piece.type === PieceType.PAWN;
@@ -221,17 +234,14 @@ export default function Chessboard() {
                 modalRef.current?.classList.remove("hidden");
                 setPromotionPawn(piece);
               }
-              results.push(piece);
+
+              referee.removeCapturedPiece(piece, pieces);
             } else if (!samePosition(piece.position, { x, y })) {
               if (piece.type === PieceType.PAWN) {
                 piece.enPassant = false;
               }
-              results.push(piece);
             }
-
-            return results;
-          }, [] as Piece[]);
-          setPieces(updatedPieces);
+          }
           changeTurn = true;
         } else {
           //RESETS THE PIECE POSITION
@@ -245,19 +255,21 @@ export default function Chessboard() {
     const stateOfGame = referee.isCheckmate(pieces, !turn);
     if (stateOfGame === "true") {
       console.log("checkmate!!!! ");
+      return;
     } else if (stateOfGame === "stalemate") {
       console.log("stalemate");
     } else if (stateOfGame === "draw") {
       console.log("draw by unsuficient material");
     }
-    setTurn(true);
-    if (changeTurn) {
-      setEngineToPlay(true);
-      // engine.play(pieces)
-      // setTimeout(() => {engine.play(pieces)}, 100)
+    // setTurn(true);
+    // if (changeTurn) {
+    //   setEngineToPlay(true);
+    //   // engine.play(pieces)
+    //   // setTimeout(() => {engine.play(pieces)}, 100)
 
-      onDropObservable.subscribe(dropPiece);
-    }
+    //   onDropObservable.subscribe(dropPiece);
+    // }
+    setTurn(!turn);
   }
 
   function promotePawn(pieceType: PieceType) {

@@ -177,6 +177,7 @@ export default class Referee {
       // console.log("captured piece ", p);
       let idx = pieces.indexOf(p);
       if (idx !== -1) {
+        // console.log("p jamais égale ", idx);
         pieces.splice(idx, 1);
       }
     }
