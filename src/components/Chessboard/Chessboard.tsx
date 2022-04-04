@@ -174,7 +174,6 @@ export default function Chessboard() {
             y
           );
         } else if (isEnPassantMove) {
-
           const updatePieces: Piece[] = [];
 
           pieces.forEach((piece) => {
@@ -196,7 +195,7 @@ export default function Chessboard() {
                 pieces.splice(idx, 1);
               }
             }
-          })
+          });
 
           setPieces(updatePieces);
           changeTurn = true;
@@ -264,12 +263,12 @@ export default function Chessboard() {
     }
     setTurn(true);
     if (changeTurn) {
-    //   setEngineToPlay(true);
-    //   // engine.play(pieces)
-    //   // setTimeout(() => {engine.play(pieces)}, 100)
+      //   setEngineToPlay(true);
+      //   // engine.play(pieces)
+      //   // setTimeout(() => {engine.play(pieces)}, 100)
 
       onDropObservable.subscribe(dropPiece);
-          //setTurn(!turn);
+      // setTurn(!turn);
     }
   }
 

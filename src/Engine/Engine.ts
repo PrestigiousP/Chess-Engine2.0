@@ -67,7 +67,11 @@ export default class Engine {
       if (pieces.length > 0) {
         for (const piece of pieces) {
           console.log(piece.position);
-          if (piece.position === bestMove.piece.position) {
+
+          if (
+            piece.position !== null &&
+            piece.position === bestMove.piece.position
+          ) {
             piece.position = bestMove.position;
             this.ref.removeCapturedPiece(piece, pieces);
             return pieces;
@@ -89,6 +93,26 @@ export default class Engine {
     let bestMov = <AlphaBetaMove>(
       (<unknown>{ piece: null, position: null, value: null })
     );
+
+    if (maximizingPlayer === TeamType.OPPONENT) {
+      if (this.ref.isCheckmate(pieces, false) === "true") {
+        let _eval = <AlphaBetaMove>(<unknown>{
+          piece: null,
+          position: null,
+          value: -1 * Math.pow(10, 1000),
+        });
+        return _eval;
+      }
+    } else if (maximizingPlayer === TeamType.OUR) {
+      if (this.ref.isCheckmate(pieces, true) === "true") {
+        let _eval = <AlphaBetaMove>(<unknown>{
+          piece: null,
+          position: null,
+          value: 1 * Math.pow(10, 1000),
+        });
+        return _eval;
+      }
+    }
     if (depth === 0) {
       const value = this.evaluation(pieces);
       // if (value === 1) {
